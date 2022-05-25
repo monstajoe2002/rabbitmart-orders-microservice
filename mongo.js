@@ -1,29 +1,13 @@
-const { MongoClient, ObjectId } = require('mongodb');
-const util = require('util');
+const mongoose=require('mongoose');
+require('dotenv').config();
 
-util.promisify(MongoClient.connect);
-
-const { MONGO_URI, MONGO_DB_NAME } = process.env;
-
-let dbConnection;
-
-const connect = async () => {
-    try {
-        const client = await MongoClient.connect(MONGO_URI);
-        dbConnection = client.db(MONGO_DB_NAME);
-    } catch (e) {
-        throw new Error(`Could not establish database connection: ${e}`);
-    }
-};
-
-const mongoClient = async () => {
-    if (!dbConnection) {
-        await connect();
-    }
-    return dbConnection;
-};
-
-module.exports = {
-    mongoClient,
-    ObjectId
-};
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
+var conn = mongoose.connection;
+conn.on('connected', function () {
+    console.log('database is connected successfully');
+});
+conn.on('disconnected', function () {
+    console.log('database is disconnected successfully');
+})
+conn.on('error', console.error.bind(console, 'connection error:'));
+module.exports = conn;
