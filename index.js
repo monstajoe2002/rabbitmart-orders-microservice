@@ -1,53 +1,43 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose');
-const conn = require('./mongo');
+require('dotenv').config();
+const express = require('express');
+const mongoose=require('mongoose');
+const { mongoClient } = require('./mongo');
 const port = 3000 || 8000
 const app = express()
+
 const ordersSchema = new mongoose.Schema({
-    customer_name: String,
-    customer_id: Number,
+    name: String,
     order_date: Date
 })
-const Order = mongoose.model('order', ordersSchema)
-//link schema to a model
-
+const Order=mongoose.model('orders',ordersSchema )
+//test using a document
+const order=new Order({name:'Slim',order_date:new Date()})
 //Routes using the CRUD model
-app.get('/api/orders', (req, res) => {
-
-    res.status(200).json({ msg: 'Get order' })
+app.get('/api/orders', async (req, res) => {
+    const db = await mongoClient();
+    if (!db) res.status(500).send('Systems Unavailable');
+    await db.collection('orders').find({})
+    res.status(200).json({ msg: 'Get order',orders:allData })
 })
-app.post('/api/orders', (req, res) => {
-    conn.once('open', function () {
-        
-
-        // define Schema
-        const ordersSchema = new mongoose.Schema({
-            customer_name: String,
-            customer_id: Number,
-            order_date: Date
-        })
-
-        // compile schema to model
-        const Order = mongoose.model('order', ordersSchema)
-
-        // a document instance
-        const customerOrder = new Order({ name: 'Youssef', order_date: new Date().toDateString() })
-        // save model to database
-        customerOrder.save(function (err, order) {
-            if (err) return console.error(err);
-            console.log(order.name + " saved to order collection.");
-        });
-        
-    });
-    return res.status(200).json({ msg: 'Create order' })
+app.post('/api/orders', async(req, res) => {
+    
+    const db = await mongoClient();
+    if (!db) res.status(500).send('Systems Unavailable');
+    await db.collection('orders').insertOne(order)
+    res.status(200).json(order)
 
 })
-app.put('/api/orders/:id', (req, res) => {
+app.put('/api/orders/:id',async (req, res) => {
+    const db = await mongoClient();
+    if (!db) res.status(500).send('Systems Unavailable');
+    await db.collection('orders').updateOne({name:'Slim'},{$set:{name:'balabizo'}})
     res.status(200).json({ msg: `Update order no.${req.params.id}` })
 })
 
-app.delete('/api/orders/:id', (req, res) => {
+app.delete('/api/orders/:id',async (req, res) => {
+    const db = await mongoClient();
+    if (!db) res.status(500).send('Systems Unavailable');
+    await db.collection('orders').deleteOne({name:'balabizo'})
     res.status(200).json({ msg: `Delete order no.${req.params.id}` })
 })
 
