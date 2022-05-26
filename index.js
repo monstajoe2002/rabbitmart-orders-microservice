@@ -23,7 +23,7 @@ app.get('/api/orders', async (req, res) => {
     if (!db) res.status(500).send('Systems Unavailable');
     const allData = await db.collection('orders').find().toArray();
     
-    res.status(200).json({ msg: 'Get order',allData })
+    res.status(200).json(allData)
 })
 app.post('/api/orders', async(req, res) => {
     
