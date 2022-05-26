@@ -21,7 +21,8 @@ const order = new Order({ name: 'balabizooo', order_date: new Date(), products: 
 app.get('/api/orders', async (req, res) => {
     const db = await mongoClient();
     if (!db) res.status(500).send('Systems Unavailable');
-    const allData=await db.collection('orders').find()
+    const allData = await db.collection('orders').find().toArray();
+    
     res.status(200).json({ msg: 'Get order',allData })
 })
 app.post('/api/orders', async(req, res) => {
