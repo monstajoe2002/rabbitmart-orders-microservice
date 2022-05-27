@@ -1,22 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const { ObjectId } = require('mongodb');
-const mongoose=require('mongoose');
 const { mongoClient } = require('./mongo');
 const port = 3000 || 8000
 const app = express()
 
-const ordersSchema = new mongoose.Schema({
-    name: String,
-    order_date: Date,
-    products:Array,
-    status:String
-})
-const Order=mongoose.model('orders',ordersSchema )
 //status array
 const orderStatus = ['CREATED', 'PROCESSING', 'FULFILLED', 'CANCELED']
 //test using a document
-const order = new Order({ name: 'balabizooo', order_date: new Date(), products: ['Lotus Biscoffs', 'El Doha Rice 1kg'], status: orderStatus[0]})
+const order ={ name: 'Slim', order_date: new Date(), products: ['Lotus Biscoffs', 'El Doha Rice 1kg','Rawabi fala7i'], status: orderStatus[0]}
 //Routes using the CRUD model
 app.get('/api/orders', async (req, res) => {
     const db = await mongoClient();
