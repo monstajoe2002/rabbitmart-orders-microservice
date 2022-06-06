@@ -9,14 +9,14 @@ app.use(express.json())
 //status array
 const orderStatus = ['CREATED', 'PROCESSING', 'FULFILLED', 'CANCELED']
 //Routes using the CRUD model
-app.get('/:id', async (req, res) => {
+app.get('/api/orders/:id', async (req, res) => {
     const db = await mongoClient();
     if (!db) res.status(500).send('Systems Unavailable');
     const allData = await db.collection('orders').findOne({_id:ObjectId(`${req.params.id}`)})
     
     res.status(200).json({ msg: 'Get order',allData })
 })
-app.get('/', async (req, res) => {
+app.get('/api/orders/', async (req, res) => {
     const db = await mongoClient();
     if (!db) res.status(500).send('Systems Unavailable');
     const allData = await db.collection('orders').find().toArray();
